@@ -1,0 +1,6 @@
+/* Dashboard layout */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4)}
+.stat{display:flex;flex-direction:column;gap:var(--s1)}.stat strong{font-size:28px;font-weight:650;line-height:1.2}.stat.bad strong{color:var(--bad)}
+.cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:var(--s5);align-items:start}.stack{display:flex;flex-direction:column;gap:var(--s5);min-width:0}
+.dl{display:flex;justify-content:space-between;gap:var(--s3);padding:var(--s2) 0;border-bottom:1px solid var(--border)}.dl:last-child{border:0}
+.brk{display:grid;grid-template-columns:90px 1fr 24px;gap:var(--s3);align-items:center;margin-bottom:var(--s2)}
