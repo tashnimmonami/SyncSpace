@@ -1,33 +1,45 @@
-import { resolve } from "path";
-import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
+import { fileURLToPath } from "node:url";
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const websiteDir = resolve(__dirname, "website");
-const productDir = resolve(__dirname, "product");
+const repoRoot = fileURLToPath(new URL("../", import.meta.url));
 
 export default defineConfig({
-  root: websiteDir,
-  publicDir: false,
+  root: repoRoot,
+
   build: {
-    outDir: resolve(__dirname, "dist"),
+    outDir: "dist",
     emptyOutDir: true,
+
     rollupOptions: {
       input: {
-        main: resolve(websiteDir, "index.html"),
-        login: resolve(websiteDir, "login.html"),
-        signup: resolve(websiteDir, "signup.html"),
-        websiteDashboard: resolve(websiteDir, "dashboard.html"),
-        product: resolve(productDir, "index.html"),
-        tasks: resolve(productDir, "tasks.html"),
-        projects: resolve(productDir, "projects.html"),
-        activity: resolve(productDir, "activity.html"),
-        settings: resolve(productDir, "settings.html"),
-      },
-      output: {
-        entryFileNames: "assets/[name]-[hash].js",
-        chunkFileNames: "assets/[name]-[hash].js",
-        assetFileNames: "assets/[name]-[hash][extname]",
+        "website/index": fileURLToPath(
+          new URL("./index.html", import.meta.url)
+        ),
+        "website/login": fileURLToPath(
+          new URL("./login.html", import.meta.url)
+        ),
+        "website/signup": fileURLToPath(
+          new URL("./signup.html", import.meta.url)
+        ),
+        "website/dashboard": fileURLToPath(
+          new URL("./dashboard.html", import.meta.url)
+        ),
+
+        "product/index": fileURLToPath(
+          new URL("../product/index.html", import.meta.url)
+        ),
+        "product/tasks": fileURLToPath(
+          new URL("../product/tasks.html", import.meta.url)
+        ),
+        "product/projects": fileURLToPath(
+          new URL("../product/projects.html", import.meta.url)
+        ),
+        "product/activity": fileURLToPath(
+          new URL("../product/activity.html", import.meta.url)
+        ),
+        "product/settings": fileURLToPath(
+          new URL("../product/settings.html", import.meta.url)
+        ),
       },
     },
   },
