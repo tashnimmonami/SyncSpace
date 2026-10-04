@@ -3,15 +3,31 @@ import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const websiteDir = resolve(__dirname, "website");
+const productDir = resolve(__dirname, "product");
 
 export default defineConfig({
+  root: websiteDir,
+  publicDir: false,
   build: {
+    outDir: resolve(__dirname, "dist"),
+    emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "index.html"),
-        login: resolve(__dirname, "login.html"),
-        signup: resolve(__dirname, "signup.html"),
-        dashboard: resolve(__dirname, "dashboard.html"),
+        main: resolve(websiteDir, "index.html"),
+        login: resolve(websiteDir, "login.html"),
+        signup: resolve(websiteDir, "signup.html"),
+        websiteDashboard: resolve(websiteDir, "dashboard.html"),
+        product: resolve(productDir, "index.html"),
+        tasks: resolve(productDir, "tasks.html"),
+        projects: resolve(productDir, "projects.html"),
+        activity: resolve(productDir, "activity.html"),
+        settings: resolve(productDir, "settings.html"),
+      },
+      output: {
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
       },
     },
   },
