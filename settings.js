@@ -7,7 +7,7 @@
     const ini = h('span', { class: 'av', style: 'width:44px;height:44px;font-size:15px;background:#5b4be1', text: '' });
     const initials = () => (name.value.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('') || '?').toUpperCase(); ini.textContent = initials(); name.addEventListener('input', () => { ini.textContent = initials(); });
     const chk = (key, label) => { const c = h('input', { type: 'checkbox', checked: P.notif[key], onchange: () => { P.notif[key] = c.checked; SS.savePrefs(); SS.toast('Preference saved', 'ok'); } }); return h('label', {}, c, label); };
-    const radio = (v, l) => h('label', {}, h('input', { type: 'radio', name: 'theme', value: v, checked: P.theme === v, onchange: () => { P.theme = v; SS.savePrefs(); document.documentElement.dataset.theme = v; SS.toast(l + ' theme applied', 'ok'); } }), l);
+    const radio = (v, l) => h('label', {}, h('input', { type: 'radio', name: 'theme', value: v, checked: P.theme === v, onchange: () => { SS.setTheme(v); SS.toast(l + ' theme applied', 'ok'); } }), l);
     const dens = h('input', { type: 'checkbox', checked: P.compact, onchange: () => { P.compact = dens.checked; document.body.classList.toggle('compact', P.compact); SS.savePrefs(); } });
     main.replaceChildren(h('div', { class: 'page-head' }, h('div', {}, h('h2', { text: 'Settings' }), h('p', { class: 'muted', text: 'Saved in this browser only. Real account management comes with Supabase.' }))),
       h('div', { class: 'settings' },

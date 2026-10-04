@@ -9,6 +9,7 @@
     return e;
   };
   const IC = { menu: 'M4 6h16M4 12h16M4 18h16', bell: 'M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20h4', search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14M20 20l-4-4', x: 'M6 6l12 12M18 6L6 18',
+    sun: 'M12 3v2M12 19v2M3 12h2M19 12h2M5.64 5.64l1.42 1.42M16.94 16.94l1.42 1.42M5.64 18.36l1.42-1.42M16.94 7.06l1.42-1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0', moon: 'M20.2 15.5A8.5 8.5 0 0 1 8.5 3.8 8.5 8.5 0 1 0 20.2 15.5Z',
     home: 'M3 12l9-8 9 8M5 10v10h14V10', check: 'M5 12l4 4 10-10', folder: 'M3 7h18v12H3zM3 7l3-3h6l2 3', pulse: 'M3 12h4l3-8 4 16 3-8h4', gear: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3M12 19v3M2 12h3M19 12h3' };
   SS.icon = d => { const ns = 'http://www.w3.org/2000/svg', s = document.createElementNS(ns, 'svg'), p = document.createElementNS(ns, 'path');
     s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('class', 'ico'); s.setAttribute('aria-hidden', 'true'); p.setAttribute('d', d); s.append(p); return s; };
@@ -142,6 +143,17 @@
   function buildShell() {
     const b = document.body, page = b.dataset.page, mq = matchMedia('(max-width:900px)');
     document.documentElement.dataset.theme = SS.prefs.theme; b.classList.toggle('compact', SS.prefs.compact); b.classList.toggle('collapsed', SS.prefs.collapsed);
+    SS.setTheme = theme => {
+      SS.prefs.theme = theme;
+      document.documentElement.dataset.theme = theme;
+      SS.savePrefs();
+      document.querySelectorAll('input[name="theme"]').forEach(input => { input.checked = input.value === theme; });
+      const dark = theme === 'dark';
+      themeToggle.replaceChildren(SS.icon(dark ? IC.sun : IC.moon));
+      themeToggle.setAttribute('aria-label', 'Switch to ' + (dark ? 'light' : 'dark') + ' mode');
+      themeToggle.setAttribute('title', 'Switch to ' + (dark ? 'light' : 'dark') + ' mode');
+      themeToggle.setAttribute('aria-pressed', String(dark));
+    };
     const nav = [['index', 'index.html', 'Overview', IC.home], ['tasks', 'tasks.html?mine=1', 'My Tasks', IC.check], ['projects', 'projects.html', 'Projects', IC.folder], ['activity', 'activity.html', 'Team Activity', IC.pulse], ['settings', 'settings.html', 'Settings', IC.gear]];
     const me = SS.user(SS.ME), act = b.dataset.action;
     const side = h('aside', { class: 'side', id: 'sidebar', 'aria-label': 'Sidebar' }, h('div', { class: 'brand' }, h('span', { class: 'logo', text: 'S' }), 'SyncSpace'),
@@ -152,9 +164,11 @@
     const q = h('input', { type: 'search', placeholder: 'Search', 'aria-label': 'Search', oninput: () => SS.onSearch && SS.onSearch(q.value.trim().toLowerCase()), onkeydown: e => { if (e.key === 'Enter' && !SS.onSearch) location.href = 'tasks.html?q=' + encodeURIComponent(q.value.trim()); } });
     const ov = SS.db.tasks.filter(SS.isOverdue).length;
     const bell = h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Notifications', onclick: () => SS.modal('Notifications', [h('p', { class: 'muted', text: ov + ' overdue task' + (ov === 1 ? '' : 's') + ' in your workspace.' }), SS.feedList(SS.activityService.list().filter(a => a.actorId !== SS.ME), 6)]) }, SS.icon(IC.bell), ov ? h('span', { class: 'dot' }) : null);
+    const themeToggle = h('button', { class: 'icon-btn', type: 'button', onclick: () => SS.setTheme(SS.prefs.theme === 'dark' ? 'light' : 'dark') });
+    SS.setTheme(SS.prefs.theme);
     const top = h('header', { class: 'top' }, h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Toggle sidebar', onclick: toggle }, SS.icon(IC.menu)),
-      h('div', {}, h('div', { class: 'crumb', id: 'crumb', text: 'Workspace / ' + b.dataset.title }), h('h1', { id: 'ptitle', text: b.dataset.title })),
-      h('label', { class: 'search' }, SS.icon(IC.search), q), bell, SS.avatar(SS.ME),
+      h('div', { class: 'top-title' }, h('div', { class: 'crumb', id: 'crumb', text: 'Workspace / ' + b.dataset.title }), h('h1', { id: 'ptitle', text: b.dataset.title })),
+      h('label', { class: 'search' }, SS.icon(IC.search), q), themeToggle, bell, SS.avatar(SS.ME),
       act ? h('button', { class: 'btn primary', type: 'button', onclick: act === 'task' ? () => SS.openTask(null) : SS.openProject }, act === 'task' ? 'Create task' : 'Create project') : null);
     document.getElementById('shell').replaceChildren(side, h('div', { class: 'scrim', onclick: () => b.classList.remove('open') }), h('div', { class: 'main' }, top, h('main', { id: 'main', class: 'content' })));
     SS.setTitle = t => { document.getElementById('ptitle').textContent = t; document.getElementById('crumb').textContent = 'Projects / ' + t; document.title = t + ' · SyncSpace'; };
